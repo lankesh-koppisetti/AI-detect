@@ -24,11 +24,19 @@ Usage
 2. Basic run (default threshold 60%):
    ./monitor_health.sh
 
-3. Set a custom threshold (e.g., 75%):
+3. Show CPU/memory details (only shown when requested):
+   ./monitor_health.sh --details
+
+4. Set a custom threshold (e.g., 75%):
    ./monitor_health.sh --threshold 75
 
-4. Show explanation about what the script checks and how it works:
+5. Show explanation about what the script checks and how it works:
    ./monitor_health.sh --explain
+
+Notes on output behavior
+-----------------------
+- By default the script prints only the overall status line: "SYSTEM STATUS: HEALTHY" or "SYSTEM STATUS: UNHEALTHY".
+- Pass --details (or -d) to include CPU and memory percentages and per-metric alert lines when applicable.
 
 Behavior
 --------
