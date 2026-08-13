@@ -7,6 +7,7 @@ set -euo pipefail
 
 THRESHOLD=60
 EXPLAIN=0
+DETAILS=0
 
 print_explain() {
   cat <<'EOF'
@@ -16,6 +17,7 @@ This script checks system CPU and memory usage on Linux.
 If either CPU or Memory usage is >= threshold, the script reports UNHEALTHY and exits with code 1.
 Otherwise it reports HEALTHY and exits with code 0.
 Use --threshold N to change the percent threshold (integer).
+Use --details (or -d) to print CPU and memory percentages in the output.
 EOF
 }
 
@@ -24,12 +26,14 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --explain|-e)
       EXPLAIN=1; shift ;;
+    --details|-d|--verbose|-v)
+      DETAILS=1; shift ;;
     --threshold|-t)
       if [[ -n ${2-} ]]; then THRESHOLD="$2"; shift 2; else echo "Missing value for --threshold" >&2; exit 2; fi ;;
     --help|-h)
-      echo "Usage: $0 [--threshold N] [--explain]"; exit 0 ;;
+      echo "Usage: $0 [--threshold N] [--explain] [--details]"; exit 0 ;;
     *)
-      echo "Unknown arg: $1" >&2; echo "Usage: $0 [--threshold N] [--explain]"; exit 2 ;;
+      echo "Unknown arg: $1" >&2; echo "Usage: $0 [--threshold N] [--explain] [--details]"; exit 2 ;;
   esac
 done
 
@@ -110,10 +114,14 @@ fi
 
 if [[ $unhealthy -eq 1 ]]; then
   echo "SYSTEM STATUS: UNHEALTHY"
-  echo -e "$msg"
+  if [[ "$DETAILS" -eq 1 ]]; then
+    echo -e "$msg"
+  fi
   exit 1
 else
   echo "SYSTEM STATUS: HEALTHY"
-  printf "CPU: %s%%, Memory: %s%% (threshold: %s%%)\n" "$cpu" "$mem" "$THRESHOLD"
+  if [[ "$DETAILS" -eq 1 ]]; then
+    printf "CPU: %s%%, Memory: %s%% (threshold: %s%%)\n" "$cpu" "$mem" "$THRESHOLD"
+  fi
   exit 0
 fi
