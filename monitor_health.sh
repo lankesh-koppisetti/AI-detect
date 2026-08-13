@@ -11,6 +11,7 @@ DETAILS=0
 
 print_explain() {
   cat <<'EOF'
+printf "CPU: %s%%, Memory: %s%% (threshold: %s%%)\n" "$cpu" "$mem" "$THRESHOLD"
 This script checks system CPU and memory usage on Linux.
 - CPU: sampled from /proc/stat over 1s to compute percent busy.
 - Memory: uses MemTotal and MemAvailable from /proc/meminfo.
@@ -114,14 +115,8 @@ fi
 
 if [[ $unhealthy -eq 1 ]]; then
   echo "SYSTEM STATUS: UNHEALTHY"
-  if [[ "$DETAILS" -eq 1 ]]; then
-    echo -e "$msg"
-  fi
   exit 1
 else
   echo "SYSTEM STATUS: HEALTHY"
-  if [[ "$DETAILS" -eq 1 ]]; then
-    printf "CPU: %s%%, Memory: %s%% (threshold: %s%%)\n" "$cpu" "$mem" "$THRESHOLD"
-  fi
-  exit 0
+  exit 1
 fi
